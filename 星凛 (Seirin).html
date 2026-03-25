@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>総合占術アプリ - 星凛 (Seirin) -</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --glass-bg: rgba(20, 25, 40, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-gold: #d4af37;
+            --accent-gold-light: #fbe696;
+            --accent-gold-dark: #aa8529;
+            --glow-color: rgba(212, 175, 55, 0.4);
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Noto Serif JP', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem 1rem;
+        }
+
+        /* Background Animated Orbs */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 50%, #111827 0%, #030712 100%);
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+
+        .circle-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(45, 27, 84, 0.6);
+            top: -100px;
+            left: -100px;
+        }
+
+        .circle-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(212, 175, 55, 0.15);
+            bottom: 10vh;
+            right: -50px;
+            animation-delay: -5s;
+        }
+
+        .circle-3 {
+            width: 250px;
+            height: 250px;
+            background: rgba(20, 83, 116, 0.4);
+            top: 40vh;
+            left: 40vw;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(50px) scale(1.1); }
+        }
+
+        /* Container & Glassmorphism */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        .slide-up {
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        .title {
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-gold-light), var(--accent-gold));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px var(--glow-color);
+        }
+
+        .subtitle {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-top: 0.5rem;
+            letter-spacing: 4px;
+        }
+
+        .description {
+            text-align: center;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Form Styles */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .name-inputs {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .name-inputs .input-field {
+            flex: 1;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+        }
+
+        input[type="text"],
+        input[type="date"] {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            color: white;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            opacity: 0.6;
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Custom Radio Buttons */
+        .gender-group {
+            margin-bottom: 2.5rem;
+        }
+
+        .radio-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        input[type="radio"] {
+            display: none;
+        }
+
+        .radio-label {
+            flex: 1;
+            text-align: center;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        input[type="radio"]:checked + .radio-label {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--accent-gold);
+            color: var(--accent-gold-light);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+        }
+
+        /* Buttons */
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-dark));
+            color: #000;
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4), 0 0 30px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, var(--accent-gold-light), var(--accent-gold));
+        }
+
+        .submit-btn:active {
+            transform: translateY(1px);
+        }
+
+        .submit-btn span {
+            transition: opacity 0.3s;
+        }
+
+        .submit-btn.loading span {
+            opacity: 0;
+        }
+
+        .loader-ring {
+            display: none;
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0,0,0,0.3);
+            border-radius: 50%;
+            border-top-color: #000;
+            animation: spin 1s infinite linear;
+        }
+
+        .submit-btn.loading .loader-ring {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Result Section */
+        .result-title {
+            font-family: 'Zen Old Mincho', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            color: var(--accent-gold-light);
+        }
+
+        .user-greeting {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .fortune-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .fortune-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            opacity: 0;
+            animation: fadeInSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fortune-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(212, 175, 55, 0.1);
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            background: rgba(212, 175, 55, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .card-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+
+        .result-highlight {
+            font-size: 1.4rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-family: 'Zen Old Mincho', serif;
+        }
+
+        .result-text {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(45, 27, 84, 0.2));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card h3 {
+            color: var(--accent-gold-light);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .summary-text {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            text-align: left;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: 'Noto Serif JP', serif;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .name-inputs {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .glass-panel {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-elements">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+    <div class="container" id="app-container">
+        <!-- Input Section -->
+        <div id="input-section" class="glass-panel slide-up">
+            <h1 class="title">総合占術鑑定<span class="subtitle">- 星凛 Seirin -</span></h1>
+            <p class="description">四柱推命・九星気学・算命学・数秘術・姓名判断の<br>5つの統計学からあなたの運命を紐解きます。</p>
+            
+            <div id="fortune-form" class="form-container">
+                <div class="input-group">
+                    <div class="name-inputs">
+                        <div class="input-field">
+                            <label for="lastName">姓</label>
+                            <input type="text" id="lastName" required placeholder="山田">
+                        </div>
+                        <div class="input-field">
+                            <label for="firstName">名</label>
+                            <input type="text" id="firstName" required placeholder="太郎">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="birthDate">生年月日</label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+                </div>
+                
+                <div class="input-group gender-group">
+                    <label>性別</label>
+                    <div class="radio-options">
+                        <input type="radio" id="gender-m" name="gender" value="male" checked>
+                        <label for="gender-m" class="radio-label">男性</label>
+                        
+                        <input type="radio" id="gender-f" name="gender" value="female">
+                        <label for="gender-f" class="radio-label">女性</label>
+
+                        <input type="radio" id="gender-o" name="gender" value="other">
+                        <label for="gender-o" class="radio-label">その他</label>
+                    </div>
+                </div>
+                
+                <button type="button" class="submit-btn" id="submit-btn">
+                    <span>運命を鑑定する ✨</span>
+                    <div class="loader-ring"></div>
+                </button>
+                <div id="error-message" style="color: #ffb3b3; margin-top: 1rem; text-align: center; display: none; font-size: 0.95rem; font-weight: bold;"></div>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="glass-panel hidden">
+            <h2 class="result-title">鑑定結果</h2>
+            <p class="user-greeting" id="result-greeting"></p>
+            
+            <div class="fortune-cards">
+                <!-- 数秘術 -->
+                <div class="fortune-card" style="animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">🔢</div>
+                        <h3>数秘術</h3>
+                        <span class="badge">Birth Path</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="num-res-value">運命数 0</p>
+                        <p class="result-text" id="num-res-text">--</p>
+                    </div>
+                </div>
+                
+                <!-- 九星気学 -->
+                <div class="fortune-card" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-icon">⭐</div>
+                        <h3>九星気学</h3>
+                        <span class="badge">Nine Star</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="nine-res-value">本命星</p>
+                        <p class="result-text" id="nine-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 四柱推命 -->
+                <div class="fortune-card" style="animation-delay: 0.3s">
+                    <div class="card-header">
+                        <div class="card-icon">☯️</div>
+                        <h3>四柱推命</h3>
+                        <span class="badge">Four Pillars</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="four-res-value">日主</p>
+                        <p class="result-text" id="four-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 算命学 -->
+                <div class="fortune-card" style="animation-delay: 0.4s">
+                    <div class="card-header">
+                        <div class="card-icon">🌌</div>
+                        <h3>算命学</h3>
+                        <span class="badge">Sanmei</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="sanmei-res-value">主星</p>
+                        <p class="result-text" id="sanmei-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 姓名判断 -->
+                <div class="fortune-card" style="animation-delay: 0.5s">
+                    <div class="card-header">
+                        <div class="card-icon">✍️</div>
+                        <h3>姓名判断</h3>
+                        <span class="badge">Name</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="name-res-value">総格</p>
+                        <p class="result-text" id="name-res-text">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 総合鑑定 -->
+            <div class="summary-card" style="animation-delay: 0.6s">
+                <h3>✨ 総合鑑定書 ✨</h3>
+                <p id="summary-res-text" class="summary-text">--</p>
+            </div>
+            
+            <button class="back-btn" id="back-btn">もう一度占う</button>
+        </div>
+    </div>
+    
+    <script>
+        (function() {
+            const form = document.getElementById('fortune-form');
+            const inputSection = document.getElementById('input-section');
+            const resultSection = document.getElementById('result-section');
+            const submitBtn = document.getElementById('submit-btn');
+            const submitBtnText = submitBtn.querySelector('span');
+            const backBtn = document.getElementById('back-btn');
+            const errorMsg = document.getElementById('error-message');
+
+            const handleSubmission = (e) => {
+                e.preventDefault();
+                errorMsg.style.display = 'none';
+                submitBtnText.innerText = "処理開始...";
+                
+                try {
+                    const lastName = document.getElementById('lastName').value.trim();
+                    const firstName = document.getElementById('firstName').value.trim();
+                    const birthDateStr = document.getElementById('birthDate').value;
+                
+                    const genderEl = document.querySelector('input[name="gender"]:checked');
+                    const gender = genderEl ? genderEl.value : 'male';
+                    
+                    if (!lastName || !firstName || !birthDateStr) {
+                        errorMsg.innerText = "すべての項目（姓・名・生年月日）を入力してください。※生年月日は日付選択後に必ず「完了(または決定)」を押して値を確定させてください。";
+                        errorMsg.style.display = 'block';
+                        submitBtnText.innerText = "運命を鑑定する ✨";
+                        return;
+                    }
+
+                    // Animate button
+                    submitBtn.classList.add('loading');
+                    
+                    setTimeout(() => {
+                        try {
+                            calculateFortune(lastName, firstName, birthDateStr, gender);
+                            
+                            // Switch sections
+                            inputSection.classList.add('fade-out');
+                            setTimeout(() => {
+                                inputSection.classList.add('hidden');
+                                inputSection.classList.remove('fade-out');
+                                
+                                resultSection.classList.remove('hidden');
+                                submitBtn.classList.remove('loading');
+                                
+                                document.getElementById('result-greeting').innerHTML = `${lastName} ${firstName} 様の鑑定結果`;
+                            }, 500);
+                        } catch(err) {
+                            submitBtn.classList.remove('loading');
+                            submitBtnText.innerText = "運命を鑑定する ✨";
+                            errorMsg.innerText = "鑑定中にエラーが発生しました：" + err.message;
+                            errorMsg.style.display = 'block';
+                        }
+                    }, 500); // 
+
+                } catch(err) {
+                    errorMsg.innerText = "システムエラーが発生しました：" + err.message;
+                    errorMsg.style.display = 'block';
+                    submitBtnText.innerText = "運命を鑑定する ✨";
+                }
+            };
+            
+            submitBtn.addEventListener('click', handleSubmission);
+            submitBtn.addEventListener('touchstart', handleSubmission, {passive: false});
+
+            backBtn.addEventListener('click', () => {
+                resultSection.classList.add('hidden');
+                inputSection.classList.remove('hidden');
+                inputSection.classList.add('slide-up');
+            });
+
+            function calculateFortune(lastName, firstName, birthDateStr, gender) {
+                // iPhone Safari Date parse bug fix
+                const parts = birthDateStr.split(/\D/); // Handle YYYY/MM/DD or YYYY-MM-DD
+                const year = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
+                const day = parseInt(parts[2], 10);
+                
+                if(isNaN(year) || isNaN(month) || isNaN(day)) {
+                    throw new Error("生年月日の値がブラウザから正しく取得できませんでした。(" + birthDateStr + ")");
+                }
+                
+                // 1. 数秘術 (Numerology - Life Path Number)
+                const lifePath = calculateLifePath(year, month, day);
+                const numData = getNumerologyData(lifePath);
+                document.getElementById('num-res-value').innerText = `運命数 ${lifePath}`;
+                document.getElementById('num-res-text').innerText = numData;
+
+                // 2. 九星気学 (Nine Star Ki)
+                const nineStar = calculateNineStar(year);
+                const nineStarData = getNineStarData(nineStar);
+                document.getElementById('nine-res-value').innerText = nineStarData.name;
+                document.getElementById('nine-res-text').innerText = nineStarData.desc;
+
+                // 3. 四柱推命 (Four Pillars of Destiny - simplified to Year Stem/Branch and general element)
+                const pillars = calculateFourPillars(year);
+                document.getElementById('four-res-value').innerText = `年柱: ${pillars.kanzhi}`;
+                document.getElementById('four-res-text').innerText = pillars.desc;
+
+                // 4. 算命学 (Sanmei-gaku - simplified to primary star based on day string hash)
+                const sanmei = calculateSanmeiStar(year, month, day);
+                document.getElementById('sanmei-res-value').innerText = `主星: ${sanmei.name}`;
+                document.getElementById('sanmei-res-text').innerText = sanmei.desc;
+
+                // 5. 姓名判断 (Name Divination - using pseudo hash)
+                const nameDiv = calculateNameDivination(lastName, firstName);
+                document.getElementById('name-res-value').innerText = `総格判定: ${nameDiv.rank}`;
+                document.getElementById('name-res-text').innerText = nameDiv.desc;
+
+                // 総合鑑定
+                generateSummary(nameDiv.rank, nineStarData.name, sanmei.name, numData);
+            }
+
+            // --- Calculator Logic ---
+
+            // 数秘術
+            function calculateLifePath(y, m, d) {
+                const sumString = (str) => String(str).split('').reduce((acc, curr) => acc + parseInt(curr), 0);
+                let num = sumString(y) + sumString(m) + sumString(d);
+                
+                while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
+                    num = sumString(num);
+                }
+                return num;
+            }
+            
+            function getNumerologyData(num) {
+                const data = {
+                    1: "独立心旺盛でリーダーシップを発揮する開拓者。自らの力で運命を切り開く強さを持っています。",
+                    2: "感受性が豊かで協調性に優れたサポーター。周囲との調和を大切にし、平和をもたらします。",
+                    3: "明るくフレンドリーで創造力豊かな表現者。楽しみを見出す天才で、周囲を笑顔にします。",
+                    4: "真面目で計画性があり、目標に向かって着実に努力する安定の人。信頼の置ける存在です。",
+                    5: "自由を愛し、変化を恐れない冒険家。多才で適応力があり、新しい世界を切り開きます。",
+                    6: "愛情深く、奉仕の精神に溢れる保護者。家族や仲間を大切にし、美と調和を愛します。",
+                    7: "探求心旺盛で内省的な思索家。独自の哲学を持ち、真理を追求する深い洞察力があります。",
+                    8: "野心家で実行力に溢れる成功者。物質的・社会的な成功を収める力強いエネルギーの持ち主。",
+                    9: "慈愛に満ちた理想主義者。広い視野を持ち、人々のために尽くす博愛精神の持ち主。",
+                    11: "直感力と霊性に優れたメッセンジャー。強いインスピレーションで人々を導く使命があります。",
+                    22: "理想を現実に変える力を持つマスタービルダー。大きなスケールで世界に貢献する器です。",
+                    33: "無償の愛を体現する菩薩のような存在。常識の枠を超えたスケールで愛を広げていきます。"
+                };
+                return data[num] || "未定義";
+            }
+
+            // 九星気学
+            function calculateNineStar(year) {
+                // 立春前の処理は今回は簡易化のため省略
+                const stars = [
+                    "一白水星", "九紫火星", "八白土星", "七赤金星", "六白金星", 
+                    "五黄土星", "四緑木星", "三碧木星", "二黒土星"
+                ];
+                // 1900年が一白水星
+                const num = (year - 1900) % 9;
+                const index = num < 0 ? 9 + num : num;
+                return stars[index];
+            }
+            
+            function getNineStarData(star) {
+                const data = {
+                    "一白水星": { name: "一白水星 (水)", desc: "柔軟性と適応力に優れ、どんな環境にも溶け込みます。内面には強い芯を秘めた努力家です。" },
+                    "二黒土星": { name: "二黒土星 (土)", desc: "真面目で堅実、母のような包容力を持ちます。地道な努力が大きな成果を生む大器晩成型です。" },
+                    "三碧木星": { name: "三碧木星 (木)", desc: "朝日や若木のようにエネルギーに満ち、新しいことに挑戦する行動力があります。若々しい精神の持ち主。" },
+                    "四緑木星": { name: "四緑木星 (木)", desc: "人当たりが良く、風のように交際上手。周囲からの信頼が厚く、調和を保ちながら物事を進めます。" },
+                    "五黄土星": { name: "五黄土星 (土)", desc: "帝王の星。圧倒的な存在感とパワーを持ち、困難を乗り切る強さを持っています。浮き沈みが激しい面も。" },
+                    "六白金星": { name: "六白金星 (金)", desc: "気高くプライドを持ち、完璧を求めるタイプ。責任感が強く、上司や目上の人からの引き立てがあります。" },
+                    "七赤金星": { name: "七赤金星 (金)", desc: "社交的で華やかさを持ち、人を楽しませるのが得意です。金銭感覚に優れ、人生を豊かに楽しむ才能があります。" },
+                    "八白土星": { name: "八白土星 (土)", desc: "山のようなどっしりとした安定感。慎重ですが、一度決めたことは最後までやり遂げる強靭な意志を持っています。" },
+                    "九紫火星": { name: "九紫火星 (火)", desc: "火のように明るく情熱的で、直感とセンスに優れます。美的感覚が高く、周囲を惹きつける魅力があります。" }
+                };
+                return data[star] || { name: star, desc: "未定義" };
+            }
+
+            // 四柱推命（簡易：年柱）
+            function calculateFourPillars(year) {
+                const stems = ["庚", "辛", "壬", "癸", "甲", "乙", "丙", "丁", "戊", "己"];
+                const branches = ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"];
+                
+                const stemIdx = year % 10;
+                const branchIdx = year % 12;
+                const kanzhi = stems[stemIdx] + branches[branchIdx];
+                
+                const meanings = {
+                    "木": "成長と発展のエネルギー",
+                    "火": "情熱と自己表現力",
+                    "土": "安定と育成の力",
+                    "金": "決断力と変革の力",
+                    "水": "知恵と柔軟性"
+                };
+                
+                let element = "土";
+                if ([4,5].includes(stemIdx)) element = "木";
+                else if ([6,7].includes(stemIdx)) element = "火";
+                else if ([8,9].includes(stemIdx)) element = "土";
+                else if ([0,1].includes(stemIdx)) element = "金";
+                else if ([2,3].includes(stemIdx)) element = "水";
+
+                return {
+                    kanzhi: kanzhi,
+                    desc: `あなたの根本的なエネルギーは「${element}」の属性を帯びています。${meanings[element]}を持ち、社会的な役割においてその資質が発揮されます。`
+                };
+            }
+
+            // 算命学（簡易：主星の導出をハッシュで代替）
+            function calculateSanmeiStar(y, m, d) {
+                const stars = [
+                    { name: "貫索星", desc: "意志が強く独立心旺盛な星。自分のペースで物事を進め、一本筋の通った生き方を好みます。" },
+                    { name: "石門星", desc: "社交性に富み、和を重んじる星。組織やコミュニティの中で政治力を発揮するリーダーシップを持ちます。" },
+                    { name: "鳳閣星", desc: "自然体で楽しみを愛する星。大らかでグルメや趣味を楽しみ、寿命が長い星とも言われます。" },
+                    { name: "調舒星", desc: "繊細で感性豊かな芸術家の星。孤独を好む反面、鋭い洞察力で物事の本質を突きます。" },
+                    { name: "禄存星", desc: "愛情と奉仕、そして回転財の星。人を惹きつける魅力があり、財に恵まれますがスケールも大きいです。" },
+                    { name: "司禄星", desc: "堅実で着実に蓄積する星。家庭や蓄財を重んじ、地道な努力で盤石な人生を築きます。" },
+                    { name: "車騎星", desc: "行動力と闘争心の星。一直線に目的に向かって走り、スピード感と白黒つける潔さを持っています。" },
+                    { name: "牽牛星", desc: "名誉と自尊心の星。真面目で責任感が強く、品格ある生き方をし、組織の要として活躍します。" },
+                    { name: "龍高星", desc: "海外や放浪、改革の星。好奇心旺盛で常に新しいものを求め、古いものを破壊して創造します。" },
+                    { name: "玉堂星", desc: "伝統的な知性や母性の星。理性的で学習能力が高く、論理的かつ古風な気質を持っています。" }
+                ];
+                
+                const fakeTimestamp = y * 10000 + m * 100 + d;
+                const hash = Math.abs(Math.floor(Math.sin(fakeTimestamp) * 10000)) % 10;
+                return stars[hash];
+            }
+
+            // 姓名判断（簡易：Unicodeの合計からハッシュ）
+            function calculateNameDivination(last, first) {
+                const fullName = last + first;
+                let sum = 0;
+                for (let i = 0; i < fullName.length; i++) {
+                    sum += fullName.charCodeAt(i);
+                }
+                
+                const resultTypes = [
+                    { rank: "大吉", desc: "素晴らしい運命が名前に宿っています。困難も乗り越え、晩年は穏やかで豊かな人生を築けるでしょう。" },
+                    { rank: "吉", desc: "調和の取れた良い運勢です。人間関係に恵まれ、努力が着実に身を結ぶ画数配列です。" },
+                    { rank: "中吉", desc: "波はありますが、確かな成功を手にする運勢です。自己研鑽を怠らないことで更なる運気アップが期待できます。" },
+                    { rank: "小吉", desc: "堅実な人生を歩む暗示。劇的な変化より、平穏無事な日々の中で小さな幸せを積み重ねていくタイプです。" },
+                    { rank: "吉凶混合", desc: "試練と成功が交互に訪れるダイナミックな運勢。逆境をバネにする強さがあり、大成功を掴むポテンシャルがあります。" }
+                ];
+
+                const hash = sum % 5;
+                return resultTypes[hash];
+            }
+
+            // 総合鑑定の生成
+            function generateSummary(nameRank, starName, sanmeiName, numDesc) {
+                let msg = `あなたは「${starName.split('(')[0].trim()}」の性質を根底に持ちながら、算命学の「${sanmeiName}」が示す通り、${sanmeiName.includes("星") ? "特有の行動力や思考パターン" : "独特のオーラ"}を社会で発揮します。<br><br>`;
+                msg += `運命数が示す「${numDesc.substring(0, 15)}...」という特性は、あなたの潜在的な強みであり、迷った時の道標となるでしょう。<br><br>`;
+                msg += `姓名の画数（${nameRank}）が示す運気の流れを活かすには、自分の直感と統計学の示すバランスを意識することです。あなたの持っている五つの属性は非常にユニークで、他にはない強靭なエネルギーを秘めています。`;
+
+                document.getElementById('summary-res-text').innerHTML = msg;
+            }
+        })();
+    </script>
+</body>
+</html>
