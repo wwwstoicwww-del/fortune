@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>総合占術アプリ - 星凛 (Seirin) -</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-elements">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+    <div class="container" id="app-container">
+        <!-- Input Section -->
+        <div id="input-section" class="glass-panel slide-up">
+            <h1 class="title">総合占術鑑定<span class="subtitle">- 星凛 Seirin -</span></h1>
+            <p class="description">四柱推命・九星気学・算命学・数秘術・姓名判断の<br>5つの統計学からあなたの運命を紐解きます。</p>
+            
+            <div id="fortune-form" class="form-container">
+                <div class="input-group">
+                    <div class="name-inputs">
+                        <div class="input-field">
+                            <label for="lastName">姓</label>
+                            <input type="text" id="lastName" required placeholder="山田">
+                        </div>
+                        <div class="input-field">
+                            <label for="firstName">名</label>
+                            <input type="text" id="firstName" required placeholder="太郎">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="birthDate">生年月日</label>
+                        <input type="date" id="birthDate" required>
+                    </div>
+                </div>
+                
+                <div class="input-group gender-group">
+                    <label>性別</label>
+                    <div class="radio-options">
+                        <input type="radio" id="gender-m" name="gender" value="male" checked>
+                        <label for="gender-m" class="radio-label">男性</label>
+                        
+                        <input type="radio" id="gender-f" name="gender" value="female">
+                        <label for="gender-f" class="radio-label">女性</label>
+
+                        <input type="radio" id="gender-o" name="gender" value="other">
+                        <label for="gender-o" class="radio-label">その他</label>
+                    </div>
+                </div>
+                
+                <button type="button" class="submit-btn" id="submit-btn">
+                    <span>運命を鑑定する</span>
+                    <div class="loader-ring"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="glass-panel hidden">
+            <h2 class="result-title">鑑定結果</h2>
+            <p class="user-greeting" id="result-greeting"></p>
+            
+            <div class="fortune-cards">
+                <!-- 数秘術 -->
+                <div class="fortune-card" style="animation-delay: 0.1s">
+                    <div class="card-header">
+                        <div class="card-icon">🔢</div>
+                        <h3>数秘術</h3>
+                        <span class="badge">Birth Path</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="num-res-value">運命数 0</p>
+                        <p class="result-text" id="num-res-text">--</p>
+                    </div>
+                </div>
+                
+                <!-- 九星気学 -->
+                <div class="fortune-card" style="animation-delay: 0.2s">
+                    <div class="card-header">
+                        <div class="card-icon">⭐</div>
+                        <h3>九星気学</h3>
+                        <span class="badge">Nine Star</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="nine-res-value">本命星</p>
+                        <p class="result-text" id="nine-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 四柱推命 -->
+                <div class="fortune-card" style="animation-delay: 0.3s">
+                    <div class="card-header">
+                        <div class="card-icon">☯️</div>
+                        <h3>四柱推命</h3>
+                        <span class="badge">Four Pillars</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="four-res-value">日主</p>
+                        <p class="result-text" id="four-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 算命学 -->
+                <div class="fortune-card" style="animation-delay: 0.4s">
+                    <div class="card-header">
+                        <div class="card-icon">🌌</div>
+                        <h3>算命学</h3>
+                        <span class="badge">Sanmei</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="sanmei-res-value">主星</p>
+                        <p class="result-text" id="sanmei-res-text">--</p>
+                    </div>
+                </div>
+
+                <!-- 姓名判断 -->
+                <div class="fortune-card" style="animation-delay: 0.5s">
+                    <div class="card-header">
+                        <div class="card-icon">✍️</div>
+                        <h3>姓名判断</h3>
+                        <span class="badge">Name</span>
+                    </div>
+                    <div class="card-body">
+                        <p class="result-highlight" id="name-res-value">総格</p>
+                        <p class="result-text" id="name-res-text">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 総合鑑定 -->
+            <div class="summary-card" style="animation-delay: 0.6s">
+                <h3>✨ 総合鑑定書 ✨</h3>
+                <p id="summary-res-text" class="summary-text">--</p>
+            </div>
+            
+            <button class="back-btn" id="back-btn">もう一度占う</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
