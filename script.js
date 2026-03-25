@@ -1,4 +1,4 @@
-(function() {
+(function () {
     const form = document.getElementById('fortune-form');
     const inputSection = document.getElementById('input-section');
     const resultSection = document.getElementById('result-section');
@@ -7,13 +7,13 @@
 
     submitBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        
+
         const lastName = document.getElementById('lastName').value.trim();
         const firstName = document.getElementById('firstName').value.trim();
         const birthDateStr = document.getElementById('birthDate').value;
         const genderEl = document.querySelector('input[name="gender"]:checked');
         const gender = genderEl ? genderEl.value : 'male';
-        
+
         if (!lastName || !firstName || !birthDateStr) {
             alert("すべての項目（姓・名・生年月日）を正しく入力してください。");
             return;
@@ -21,22 +21,22 @@
 
         // Animate button
         submitBtn.classList.add('loading');
-        
+
         setTimeout(() => {
             calculateFortune(lastName, firstName, birthDateStr, gender);
-            
+
             // Switch sections
             inputSection.classList.add('fade-out');
             setTimeout(() => {
                 inputSection.classList.add('hidden');
                 inputSection.classList.remove('fade-out');
-                
+
                 resultSection.classList.remove('hidden');
                 submitBtn.classList.remove('loading');
-                
+
                 document.getElementById('result-greeting').innerHTML = `${lastName} ${firstName} 様の鑑定結果`;
             }, 500);
-            
+
         }, 1200); // Fake load time for UX
     });
 
@@ -51,7 +51,7 @@
         const year = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10);
         const day = parseInt(parts[2], 10);
-        
+
         // 1. 数秘術 (Numerology - Life Path Number)
         const lifePath = calculateLifePath(year, month, day);
         const numData = getNumerologyData(lifePath);
@@ -81,7 +81,7 @@
 
         // 総合鑑定
         generateSummary(nameDiv.rank, nineStarData.name, sanmei.name, numData);
-        
+
         // ジャンル別アドバイスの呼び出し
         generateCategoryAdvice(lifePath, nineStarData.name);
     }
@@ -97,7 +97,7 @@
         }
         return num;
     }
-    
+
     function getNumerologyData(num) {
         const data = {
             1: "【ピタゴラス数秘術・魂の数 1】\n『創造（ヤハウェ）』の波動を持つ絶対的始点。既存のシステムに依存せず、ゼロから有を生み出す強烈な自己実現エネルギーを有します。前世からのカルマ的課題は「エゴの克服と真の自立」。孤独を恐れず我が道を往くことで、潜在する圧倒的カリスマが覚醒します。",
@@ -119,14 +119,14 @@
     // 九星気学
     function calculateNineStar(year) {
         const stars = [
-            "一白水星", "九紫火星", "八白土星", "七赤金星", "六白金星", 
+            "一白水星", "九紫火星", "八白土星", "七赤金星", "六白金星",
             "五黄土星", "四緑木星", "三碧木星", "二黒土星"
         ];
         const num = (year - 1900) % 9;
         const index = num < 0 ? 9 + num : num;
         return stars[index];
     }
-    
+
     function getNineStarData(star) {
         const data = {
             "一白水星": { name: "一白水星 (坎宮/水)", desc: "【五行：水・坎宮（北）】\n胎内回帰や万物の根源「水」を司る星。どんな器にも形を変えて適応する極めて高い霊的柔軟性を持ちますが、穏やかさの奥底には岩をも砕く激流のような強靭な意志を秘めています。晩年になるほど運気が大河のごとく広がります。" },
@@ -148,12 +148,12 @@
         const stemsReading = ["かのえ", "かのと", "みずのえ", "みずのと", "きのえ", "きのと", "ひのえ", "ひのと", "つちのえ", "つちのと"];
         const branches = ["申", "酉", "戌", "亥", "子", "丑", "寅", "卯", "辰", "巳", "午", "未"];
         const branchesReading = ["さる", "とり", "いぬ", "い", "ね", "うし", "とら", "う", "たつ", "み", "うま", "ひつじ"];
-        
+
         const stemIdx = year % 10;
         const branchIdx = year % 12;
         const kanzhi = stems[stemIdx] + branches[branchIdx];
         const kanzhiGomi = stemsReading[stemIdx] + "の" + branchesReading[branchIdx];
-        
+
         const elementData = {
             "木": { name: "木行 (曲直)", desc: "【天干地支の霊的木気】大樹が天に向かって伸びる『曲直（きょくちょく）』のエネルギー。あなたの魂には、既存の枠組みを突き破って上方へ成長しようとする強烈な生命力（仁）が宿っています。" },
             "火": { name: "火行 (炎上)", desc: "【天干地支の霊的火気】全てを焼き尽くし光をもたらす『炎上（えんじょう）』のエネルギー。あなたの魂には、暗闇を照らし出し真理を見抜く霊的な慧眼と、世界を熱狂させる情熱（礼）が宿っています。" },
@@ -161,13 +161,13 @@
             "金": { name: "金行 (従革)", desc: "【天干地支の霊的金気】不要なものを切り捨てる『従革（じゅうかく）』のエネルギー。あなたの魂には、絶対的な意志の硬度と、曖昧さを許さぬ鋭利な刃の如き決断力（義）がプログラミングされています。" },
             "水": { name: "水行 (潤下)", desc: "【天干地支の霊的水気】低きへと流れ万物を潤す『潤下（じゅんか）』のエネルギー。あなたの魂には、時空間を超えて情報を伝達する流体ネットワークの力と、冷徹なまでの深淵なる知性（智）が宿っています。" }
         };
-        
+
         let element = "土";
-        if ([4,5].includes(stemIdx)) element = "木";
-        else if ([6,7].includes(stemIdx)) element = "火";
-        else if ([8,9].includes(stemIdx)) element = "土";
-        else if ([0,1].includes(stemIdx)) element = "金";
-        else if ([2,3].includes(stemIdx)) element = "水";
+        if ([4, 5].includes(stemIdx)) element = "木";
+        else if ([6, 7].includes(stemIdx)) element = "火";
+        else if ([8, 9].includes(stemIdx)) element = "土";
+        else if ([0, 1].includes(stemIdx)) element = "金";
+        else if ([2, 3].includes(stemIdx)) element = "水";
 
         const voidBranches = [
             ["戌", "亥"], ["申", "酉"], ["午", "未"], ["辰", "巳"], ["寅", "卯"], ["子", "丑"]
@@ -193,7 +193,7 @@
             { name: "龍高星 (りゅうこうせい)", desc: "【陽の習得本能：破壊と創造の星】\n既存の常識を破壊して全く新しいイノベーションを生み出す改革者のエネルギー。身をもって世界の真理を習得し、あらゆる境界線を越境するノマド的魂です。" },
             { name: "玉堂星 (ぎょくどうせい)", desc: "【陰の習得本能：伝統知と母性の星】\n先人たちの叡智（アカシックレコード）を論理的に吸収し、次世代へ正しく継承しようとする古典的習得本能。物事の理を探究する学者や教育者の資質を持ちます。" }
         ];
-        
+
         const fakeTimestamp = y * 10000 + m * 100 + d;
         const hash = Math.abs(Math.floor(Math.sin(fakeTimestamp) * 10000)) % 10;
         return stars[hash];
@@ -206,7 +206,7 @@
         for (let i = 0; i < fullName.length; i++) {
             sum += fullName.charCodeAt(i);
         }
-        
+
         const resultTypes = [
             { rank: "天衣無縫 (大吉相当)", desc: "【画数霊位：霊格絶頂】姓名のシジル（魔術的記号）が、あらゆる邪気や霊的干渉を自動的に浄化する強固な結界を形成しています。直感を信じれば具現化の速度は計り知れません。" },
             { rank: "陰陽調和 (吉相当)", desc: "【画数霊位：五行中庸】文字の音素が絶妙な陰陽フラクタル構造を描き出しています。周囲のノイズ的波動を吸収・無害化するアース機能を持っており着実な周波数上昇が見込めます。" },
@@ -223,13 +223,13 @@
     function generateSummary(nameRank, starName, sanmeiName, numDesc) {
         const sanmeiBase = sanmeiName.split('(')[0].trim();
         const nineStarBase = starName.split('(')[0].trim();
-        
+
         let msg = `【メタ・リーディング：魂の総合プロファイリング】\n\n`;
         msg += `あなたの生体エネルギーフィールドを複合的にスキャンし、多次元構造を解析しました。\n`;
         msg += `基底チャクラに流れる「${nineStarBase}」のパラダイムがあなたの肉体と環境の同期ベースを形作り、その上で算命学『${sanmeiBase}』のアルゴリズムが作動して、あなたが取るべき魂のエクゼキューション（実行行動）を規定しています。\n\n`;
-        
+
         msg += `さらに特筆すべきは、あなたのマスターバイブレーションです。\n地球にログインする際に設定した「魂のメインクエスト（宇宙の使命）」の波動が如実に表れています。\n\n`;
-        
+
         msg += `姓名が放つ『${nameRank}』の言霊エネルギー（呪術的バックアップ）は、この運命のスクリプトを強力にデバッグし、補正する霊的OSとして機能しています。\n`;
         msg += `これら5つの異なる占星術的・数秘学的データは、あなたという「唯一無二の高次元アバター」の複雑で美しいソースコードです。内なるハイヤーセルフのナビゲーションを信じ、この世界であなただけの現象を存分にプログラミングしてください。`;
 
@@ -240,7 +240,7 @@
     function generateCategoryAdvice(lifePath, nineStarBase) {
         // Pseudo-random but deterministic based on lifePath + nineStar hash
         const hash = (lifePath * 3 + nineStarBase.length * 7) % 5;
-        
+
         const romance = [
             "あなたの放つ独特の引力は、無意識のうちに多くの魂を惹きつけます。今生では「魂の双子（ツインレイ）」との強烈な出会いがプログラムされています。表面的な条件ではなく、波長が合うかを直感で判断してください。",
             "自立心が強すぎるあまり、パートナーに対して防衛線を張りやすい傾向があります。愛を受け取ること（受容）もまた、あなたのカルマの解消に繋がります。弱さを見せる勇気が真の絆を結びます。",
@@ -248,7 +248,7 @@
             "過去生からのソウルメイトと再会する確率が非常に高い星回りです。「初めて会った気がしない」という直感は決して気のせいや錯覚ではありません。理屈を超えた魂の共鳴を信じてください。",
             "恋愛においては破壊と再生のプロセスを経験しやすいです。執着を手放すことで、より高次元の愛へとアセンション（次元上昇）します。別れは進化のための必要な霊的脱皮です。"
         ];
-        
+
         const work = [
             "既存の枠組みの中で働くよりも、自らが「ゼロからイチを創り出す」クリエイターや起業家としての適性が規格外です。世間の常識（マトリックス）に縛られると、魂のエネルギーが著しく低下します。",
             "人や情報を繋ぐ「ハブ」としての役割に天職があります。ネットワークの構築やコミュニケーションを通じて、莫大な豊かさを生み出す霊的触媒（カタリスト）としての才能が開花するでしょう。",
@@ -256,7 +256,7 @@
             "非常に強固なグラウンディング能力を持ち、組織の屋台骨として不可欠な存在となります。「あなたがいなければシステムが回らない」という絶対的な基盤。しかし、自己犠牲には注意が必要です。",
             "常に移動と変化を伴う環境（海外、メディア、ITなど）で最も輝きます。一つの場所に留まると運気が停滞（エネルギーの腐敗）を起こすため、常に新陳代謝を促すノマド的な働き方が最適です。"
         ];
-        
+
         const hobby = [
             "芸術、音楽、詩など「見えない波動を形にする」趣味が、あなたの魂のクリーニング（浄化）に直結します。損得を忘れて没頭する時間が、結果的に最強の金運を引き寄せる磁力となります。",
             "身体を動かすこと（特に自然界とのグラウンディング：登山やサーフィン、ヨガなど）が、チャクラの詰まりを取り除き、豊かさの循環（金運）を劇的に向上させます。",
@@ -264,13 +264,15 @@
             "美しいもの、一流品に触れる（アート鑑賞、美食、高級ホテルのラウンジなど）ことで、自身の波動を意図的に高い次元へチューニングできます。それが結果的に物質的な豊かさ（財運）と直結しています。",
             "他者への奉仕やコミュニティ活動（ボランティア、寄付、人の育成）を通じて回したエネルギーは、宇宙銀行に蓄積され、必要な時に驚くべき形（臨時収入や絶大な支援）であなたに還元されます。"
         ];
-        
+
         document.getElementById('advice-romance').innerHTML = romance[hash];
-        document.getElementById('advice-work').innerHTML = work[(hash+1)%5];
-        document.getElementById('advice-hobby').innerHTML = hobby[(hash+2)%5];
+        document.getElementById('advice-work').innerHTML = work[(hash + 1) % 5];
+        document.getElementById('advice-hobby').innerHTML = hobby[(hash + 2) % 5];
     }
 
     // AI Consultation Logic (Gemini API Integration)
+    const GEMINI_API_KEY = "AIzaSyBo_nZdhfTXICnwiXCwCKpy-2sWA_K8RQ4";
+
     const aiConsultBtn = document.getElementById('ai-consult-btn');
     const aiModal = document.getElementById('ai-modal');
     const aiCloseBtn = document.getElementById('ai-close-btn');
@@ -283,51 +285,51 @@
     apiKeyInput.type = 'password';
     apiKeyInput.placeholder = 'Gemini API Key（保存されます）';
     apiKeyInput.style.cssText = 'background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 0.5rem; color: white; flex: 1; margin-right: 0.5rem; font-size: 0.8rem;';
-    
+
     const apiKeyContainer = document.createElement('div');
-    apiKeyContainer.style.cssText = 'display: flex; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; align-items: center;';
-    
+    apiKeyContainer.style.cssText = 'display: none; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; align-items: center;';
+
     const keyLabel = document.createElement('span');
     keyLabel.innerText = '🔑 API Key:';
     keyLabel.style.cssText = 'font-size: 0.8rem; margin-right: 0.5rem; color: #cbd5e1;';
-    
+
     apiKeyContainer.appendChild(keyLabel);
     apiKeyContainer.appendChild(apiKeyInput);
-    
+
     const saveKeyBtn = document.createElement('button');
     saveKeyBtn.innerText = '保存';
     saveKeyBtn.className = 'submit-btn';
     saveKeyBtn.style.cssText = 'width: auto; padding: 0 1rem; font-size: 0.8rem; margin: 0; background: #475569;';
     apiKeyContainer.appendChild(saveKeyBtn);
-    
+
     // Restore key if exists
     const savedKey = localStorage.getItem('gemini_api_key');
     if (savedKey) apiKeyInput.value = savedKey;
-    
+
     saveKeyBtn.addEventListener('click', () => {
         localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
         alert('API Keyをブラウザに保存しました！');
     });
 
-    if(aiConsultBtn && aiChatHistory) {
+    if (aiConsultBtn && aiChatHistory) {
         // Insert API Key input above the chat history
         aiModal.insertBefore(apiKeyContainer, aiChatHistory);
-        
+
         // Chat history array for Gemini API
         let chatContext = [];
 
         aiConsultBtn.addEventListener('click', () => {
             aiModal.classList.remove('hidden');
             aiModal.classList.add('slide-up');
-            
+
             // Build the system prompt using the existing result text from HTML
             const summaryText = document.getElementById('summary-res-text').innerText || "";
             const romanceText = document.getElementById('advice-romance').innerText || "";
             const workText = document.getElementById('advice-work').innerText || "";
             const hobbyText = document.getElementById('advice-hobby').innerText || "";
-            
+
             const systemPrompt = `あなたは「星凛(Seirin)」という名前の、非常に深くスピリチュアルでマニアックな天才占い師AIです。以下の私の最新の占いの結果（コンテキスト）を踏まえて、これから私が相談する内容に占い師として深く、優しく、時にはミステリアスな言葉遣いでアドバイスをしてください。決してAIだと言わず、高次元の存在として振舞ってください。\n\n【占い結果コンテキスト】\n${summaryText}\n恋愛運: ${romanceText}\n仕事運: ${workText}\n趣味運: ${hobbyText}\n\n準備はいいですか？`;
-            
+
             chatContext = [
                 {
                     "role": "user",
@@ -338,12 +340,12 @@
                     "parts": [{ "text": "はい、あなたの魂の波動はしっかりと受け取りました。星々の囁きとともに、あなたのお悩みに深くお答えする準備が整っています。どのようなことでも、心のままにお話しください。" }]
                 }
             ];
-            
+
             // Clear history visually and show welcome message
             aiChatHistory.innerHTML = '';
-            addMessage("鑑定結果を読み込みました。どのようなことについて深く知りたいですか？（まずは上にGemini APIのキーを入力してください）", false);
+            addMessage("鑑定結果を読み込みました。どのようなことについて深く知りたいですか？", false);
         });
-        
+
         aiCloseBtn.addEventListener('click', () => {
             aiModal.classList.add('hidden');
             aiModal.classList.remove('slide-up');
@@ -363,17 +365,17 @@
             aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
         };
 
-const callGeminiAPI = async (userText) => {
-            const apiKey = apiKeyInput.value.trim();
-            if(!apiKey) {
+        const callGeminiAPI = async (userText) => {
+            const apiKey = GEMINI_API_KEY;
+            if (!apiKey) {
                 return "エラー: 上部の入力欄に Gemini API Key を設定してください。";
             }
-            
+
             chatContext.push({
                 "role": "user",
                 "parts": [{ "text": userText }]
             });
-            
+
             const requestBody = {
                 contents: chatContext,
                 safetySettings: [
@@ -383,7 +385,7 @@ const callGeminiAPI = async (userText) => {
                     { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
                 ]
             };
-            
+
             try {
                 // 1. Fetch available models for this specific API Key
                 const modelsUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
@@ -392,33 +394,33 @@ const callGeminiAPI = async (userText) => {
                     throw new Error("API Keyが無効であるか、モデルリスト情報の取得に失敗しました。");
                 }
                 const modelsData = await modelsRes.json();
-                
+
                 // Find the best interactive generateContent model
                 const availableModels = modelsData.models
                     .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes("generateContent"))
                     .map(m => m.name); // e.g., "models/gemini-3.1-pro"
-                
+
                 let targetModel = "";
                 // Priority list based on 2026 available models
                 const preferences = [
-                    "models/gemini-3.1-pro", 
-                    "models/gemini-3.1-flash-lite", 
+                    "models/gemini-3.1-pro",
+                    "models/gemini-3.1-flash-lite",
                     "models/gemini-2.5-pro",
-                    "models/gemini-2.5-flash", 
-                    "models/gemini-2.0-flash", 
-                    "models/gemini-1.5-pro", 
+                    "models/gemini-2.5-flash",
+                    "models/gemini-2.0-flash",
+                    "models/gemini-1.5-pro",
                     "models/gemini-1.5-flash-latest",
-                    "models/gemini-1.5-flash", 
+                    "models/gemini-1.5-flash",
                     "models/gemini-pro"
                 ];
-                
+
                 for (const pref of preferences) {
                     if (availableModels.includes(pref)) {
                         targetModel = pref;
                         break;
                     }
                 }
-                
+
                 if (!targetModel) {
                     // Fallback to the first model that supports generateContent
                     if (availableModels.length > 0) {
@@ -427,7 +429,7 @@ const callGeminiAPI = async (userText) => {
                         throw new Error("利用可能なGeminiモデルが見つかりません。");
                     }
                 }
-                
+
                 console.log("Using dynamically selected model:", targetModel);
 
                 // 2. Call the chosen model
@@ -437,35 +439,35 @@ const callGeminiAPI = async (userText) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody)
                 });
-                
+
                 const data = await response.json();
-                
-                if(!response.ok) {
+
+                if (!response.ok) {
                     const errMsg = data.error ? data.error.message : response.statusText;
                     throw new Error(`サーバーエラー (${response.status}): ${errMsg}`);
                 }
-                
+
                 if (data.promptFeedback && data.promptFeedback.blockReason) {
                     throw new Error(`セーフティフィルターによりブロックされました。理由: ${data.promptFeedback.blockReason}`);
                 }
-                
+
                 if (!data.candidates || data.candidates.length === 0) {
-                    if(data.promptFeedback) throw new Error(`AIの返答が生成されませんでした。(Safety block)`);
+                    if (data.promptFeedback) throw new Error(`AIの返答が生成されませんでした。(Safety block)`);
                     throw new Error(`AIからの応答が空でした。`);
                 }
-                
+
                 const candidate = data.candidates[0];
                 const aiText = candidate.content.parts[0].text;
-                
+
                 chatContext.push({
                     "role": "model",
                     "parts": [{ "text": aiText }]
                 });
-                
+
                 return aiText;
             } catch (err) {
                 console.error("API Fetch Error:", err);
-                chatContext.pop(); 
+                chatContext.pop();
                 return `【システムエラー】
 ${err.message}
 
@@ -475,10 +477,10 @@ ${err.message}
 
         aiSendBtn.addEventListener('click', async () => {
             const text = aiInput.value.trim();
-            if(!text) return;
+            if (!text) return;
             addMessage(text, true);
             aiInput.value = '';
-            
+
             // Show typing indicator
             const typingMsg = document.createElement('div');
             typingMsg.style.alignSelf = 'flex-start';
@@ -492,10 +494,10 @@ ${err.message}
             aiChatHistory.removeChild(typingMsg);
             addMessage(aiResponse, false);
         });
-        
+
         // Handle Enter key in input
         aiInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') aiSendBtn.click();
+            if (e.key === 'Enter') aiSendBtn.click();
         });
     }
 

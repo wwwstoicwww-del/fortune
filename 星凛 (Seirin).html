@@ -930,6 +930,8 @@
     }
 
     // AI Consultation Logic (Gemini API Integration)
+    const GEMINI_API_KEY = "AIzaSyBo_nZdhfTXICnwiXCwCKpy-2sWA_K8RQ4";
+
     const aiConsultBtn = document.getElementById('ai-consult-btn');
     const aiModal = document.getElementById('ai-modal');
     const aiCloseBtn = document.getElementById('ai-close-btn');
@@ -944,7 +946,7 @@
     apiKeyInput.style.cssText = 'background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 0.5rem; color: white; flex: 1; margin-right: 0.5rem; font-size: 0.8rem;';
     
     const apiKeyContainer = document.createElement('div');
-    apiKeyContainer.style.cssText = 'display: flex; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; align-items: center;';
+    apiKeyContainer.style.cssText = 'display: none; margin-bottom: 0.5rem; padding: 0.5rem; background: rgba(255,255,255,0.1); border-radius: 8px; align-items: center;';
     
     const keyLabel = document.createElement('span');
     keyLabel.innerText = '🔑 API Key:';
@@ -1000,7 +1002,7 @@
             
             // Clear history visually and show welcome message
             aiChatHistory.innerHTML = '';
-            addMessage("鑑定結果を読み込みました。どのようなことについて深く知りたいですか？（まずは上にGemini APIのキーを入力してください）", false);
+            addMessage("鑑定結果を読み込みました。どのようなことについて深く知りたいですか？", false);
         });
         
         aiCloseBtn.addEventListener('click', () => {
@@ -1023,7 +1025,7 @@
         };
 
 const callGeminiAPI = async (userText) => {
-            const apiKey = apiKeyInput.value.trim();
+            const apiKey = GEMINI_API_KEY;
             if(!apiKey) {
                 return "エラー: 上部の入力欄に Gemini API Key を設定してください。";
             }
